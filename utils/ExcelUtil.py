@@ -12,5 +12,10 @@ class ExcelUtil:
         sheet = self.wb[sheet_name]
         sheet.cell(row=row, column=col).value = volumn
 
+    def insert_line_date(self, sheet_name, row, volums):
+        sheet = self.wb[sheet_name]
+        for index, volumn in enumerate(volums):
+            sheet.cell(row=row, column=index + 1).value = volumn
+
     def save(self, path):
         self.wb.save(path)
