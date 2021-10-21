@@ -41,11 +41,9 @@ def copPatientPath(excel,sheet_name,path,patientId):
             image_CT = pydicom.dcmread(fileCT).pixel_array
             image_SCT = pydicom.dcmread(fileSCT).pixel_array
             # 计算
-            vols = DcmUtil.comp(index, image_CBCT, image_CT, image_SCT, 512)
+            vols = DcmUtil.comp(index, image_CBCT, image_CT, image_SCT, 255)
             # 插入excel
             excel.insert_line_date(sheet_name, index + 2, vols)
-
-
 
 excel = ExcelUtil()
 copPatientPath(excel,"0134606885310576","D:\\test_data","0134606885310576")

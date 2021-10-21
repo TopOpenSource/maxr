@@ -8,7 +8,7 @@ class DcmUtil:
         mse = np.mean((img1 - img2) ** 2)
         if mse == 0:
             return 100
-        return 10 * np.log10(pix_max * pix_max / mse)
+        return 10 * np.log10(255.0 * 255.0 / mse)
 
     @staticmethod
     def mse(img1, img2):
