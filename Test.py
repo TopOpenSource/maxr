@@ -1,8 +1,7 @@
 import os
-import numpy as np
 import pydicom
-import matplotlib.pyplot as plt
 from utils.DcmUtil import DcmUtil
+from utils.ExcelUtil import ExcelUtil
 
 # DcmUtil.test()
 
@@ -17,14 +16,19 @@ from utils.DcmUtil import DcmUtil
 '''
 
 # 患者目录
-patientPath = "D:\\test_data\\test_data\\0134606885310576"
+patientPath = "D:\\test_data\\0134606885310576"
+
+excel = ExcelUtil()
+sheet_name = '0134606885310576'
+excel.create_sheet(sheet_name)
 
 patientCTPath = patientPath + "\\CT"
 patientCBCTPath = patientPath + "\\CBCT"
 patientSCTPath = patientPath + "\\SCT"
 
 for root, dirs, files in os.walk(patientCTPath):
-    for file in files:
+
+    for index, file in enumerate(files):
         # 获取文件名
         fileName = file.split(".dcm")[0]
         # 根据文件名获取 CBCT CT SCT对应的文件
@@ -48,3 +52,19 @@ for root, dirs, files in os.walk(patientCTPath):
         psnr_CBCT = DcmUtil.psnr(image_CT, image_CBCT, 512)
         psnr_SCT = DcmUtil.psnr(image_CT, image_SCT, 512)
 
+        index=index+1
+        excel.insert_data(sheet_name, index, 1, index)
+
+        excel.insert_data(sheet_name, index, 2, mae_CBCT)
+        excel.insert_data(sheet_name, index, 3, mae_SCT)
+
+        excel.insert_data(sheet_name, index, 4, mse_CBCT)
+        excel.insert_data(sheet_name, index, 5, mse_SCT)
+
+        excel.insert_data(sheet_name, index, 6, rmse_CBCT)
+        excel.insert_data(sheet_name, index, 7, rmse_SCT)
+
+        excel.insert_data(sheet_name, index, 8, psnr_CBCT)
+        excel.insert_data(sheet_name, index, 9, psnr_SCT)
+
+excel.save("D://a.xls")

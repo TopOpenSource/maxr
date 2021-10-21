@@ -4,11 +4,11 @@ import numpy as np
 class DcmUtil:
 
     @staticmethod
-    def psnr(img1, img2, pixMax):
+    def psnr(img1, img2, pix_max):
         mse = np.mean((img1 - img2) ** 2)
         if mse == 0:
             return 100
-        return 10 * np.log10(pixMax * pixMax / mse)
+        return 10 * np.log10(pix_max * pix_max / mse)
 
     @staticmethod
     def mse(img1, img2):
