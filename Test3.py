@@ -1,43 +1,47 @@
 import os
 import pydicom
-from utils.DcmUtil import DcmUtil
-from utils.ExcelUtil import ExcelUtil
+import numpy as np
 
-# DcmUtil.test()
-
-'''
-1 设置患者目录
-
-2.遍历CT的目录文件 
-  2-1 获取 CT的像素值
-  2-2 获取 CBCT对应的像素值
-  2-3 获取 SCT对应的像素值
-
-'''
+INPUT_FOLDER = 'D:\\test_data\\0134606885310576\\CT'
+patients = os.listdir(INPUT_FOLDER)
+patients.sort()
 
 
-def copPatientPath(excel, sheet_name, path, patientId):
-    # 患者目录
-    patientPath = path + "\\" + patientId
+def load_scan(path):
+    slices = [pydicom.read_file(path + '/' + s) for s in os.listdir(path)]
+    slices.sort(key=lambda x: float(x.ImagePositionPatient[2]))
+    try:
+        slice_thickness = np.abs(slices[0].ImagePositionPatient[2] - slices[1].ImagePositionPatient[2])
+    except:
+        slice_thickness = np.abs(slices[0].SliceLocation - slices[1].SliceLocation)
 
-    excel.create_sheet(sheet_name)
+    for s in slices:
+        s.SliceThickness = slice_thickness
 
-    patientCTPath = patientPath + "\\CT"
-    patientCBCTPath = patientPath + "\\CBCT"
-    patientSCTPath = patientPath + "\\SCT"
+    return slices
 
-    # 插入excel头
-    excel.insert_line_date(sheet_name
-                           , 1
-                           , ('序号', 'mae_CBCT', 'mae_SCT', 'mse_CBCT', 'mse_SCT', 'rmse_CBCT', 'rmse_SCT', 'psnr_CBCT',
-                              'psnr_SCT'))
+def get_pixels_hu(slices):
+    image = np.stack([s.pixel_array for s in slices])
+    # 转换为int16，int16是ok的，因为所有的数值都应该 <32k
+    image = image.astype(np.int16)
+    print(image.shape)
 
-    files_CT = os.listdir(patientCTPath)
-    files_CBCT = os.listdir(patientCBCTPath)
-    files_SCT = os.listdir(patientSCTPath)
+    # 设置边界外的元素为0
+    image[image == -2000] = 0
 
-    print(files_CT)
+    # 转换为HU单位
+    for slice_number in range(len(slices)):
 
-excel = ExcelUtil()
-copPatientPath(excel, "0134606885310576", "D:\\test_data", "0134606885310576")
-# excel.save("D://d.xls")
+        intercept = slices[slice_number].RescaleIntercept
+        slope = slices[slice_number].RescaleSlope
+
+        if slope != 1:
+            image[slice_number] = slope * image[slice_number].astype(np.float64)
+            image[slice_number] = image[slice_number].astype(np.int16)
+
+        image[slice_number] += np.int16(intercept)
+
+    return np.array(image, dtype=np.int16)
+
+#get_pixels_hu(load_scan(INPUT_FOLDER))
+
