@@ -24,7 +24,6 @@ def get_pixels_hu(slices):
     image = np.stack([s.pixel_array for s in slices])
     # 转换为int16，int16是ok的，因为所有的数值都应该 <32k
     image = image.astype(np.int16)
-    print(image.shape)
 
     # 设置边界外的元素为0
     image[image == -2000] = 0
@@ -43,5 +42,6 @@ def get_pixels_hu(slices):
 
     return np.array(image, dtype=np.int16)
 
-#get_pixels_hu(load_scan(INPUT_FOLDER))
-
+images=get_pixels_hu(load_scan(INPUT_FOLDER))
+max_index_CBCT = np.unravel_index(np.argmax(images, axis=None), images.shape)
+print(images[max_index_CBCT])

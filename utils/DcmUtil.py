@@ -67,4 +67,4 @@ class DcmUtil:
     def sortSlices(path):
         slices = [pydicom.read_file(path + '/' + s) for s in os.listdir(path)]
         slices.sort(key=lambda x: float(x.ImagePositionPatient[2]))
-        slices
+        return slices
