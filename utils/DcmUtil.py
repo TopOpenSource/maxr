@@ -49,7 +49,7 @@ class DcmUtil:
 
     @staticmethod
     def get_pixels_hu(slice):
-        image = slice.pixel_array.astype(np.int16)
+        image = slice.pixel_array.astype(np.int32)
         image[image == -2000] = 0
 
         intercept = slice.RescaleIntercept
@@ -57,9 +57,9 @@ class DcmUtil:
 
         if slope != 1:
             image = slope * image.astype(np.float64)
-            image = image.astype(np.int16)
+            image = image.astype(np.int32)
 
-        image += np.int16(intercept)
+        image += np.int32(intercept)
 
         return image
 
