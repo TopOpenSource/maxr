@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pydicom
 
+
 class DcmUtil:
 
     @staticmethod
@@ -47,6 +48,7 @@ class DcmUtil:
         else:
             return (index, "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1")
 
+    # 切片的灰度值
     @staticmethod
     def get_pixels_hu(slice):
         image = slice.pixel_array.astype(np.int32)
@@ -56,13 +58,33 @@ class DcmUtil:
         slope = slice.RescaleSlope
 
         if slope != 1:
-            image = slope * image.astype(np.float64)
+            image = slope * image.astype(np.int32)
             image = image.astype(np.int32)
 
         image += np.int32(intercept)
 
         return image
 
+    # 清理图片的黑边
+    @staticmethod
+    def clear_border(image1, image2, image3):
+        '''
+        1: 三张图片合并，每个坐标取最大值
+        2: 过滤 >-500的坐标
+        3：获取 最小坐标   最大坐标
+        4：截取 最小坐标-最大坐标之间的值
+        '''
+        image = np.maximum(image1, image2, image3)
+        image = np.argwhere(image > -500)
+        min_grid = image.min(axis=0)
+        max_grid = image.max(axis=0)
+
+        return image1[min_grid[0]:max_grid[0] + 1, min_grid[1]:max_grid[1] + 1] \
+            , image2[min_grid[0]:max_grid[0] + 1, min_grid[1]:max_grid[1] + 1] \
+            , image3[min_grid[0]:max_grid[0] + 1, min_grid[1]:max_grid[1] + 1]
+
+
+    # 切片排序
     @staticmethod
     def sortSlices(path):
         slices = [pydicom.read_file(path + '/' + s) for s in os.listdir(path)]

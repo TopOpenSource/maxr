@@ -40,6 +40,9 @@ def copPatientPath(excel, sheet_name, path, patientId):
         image_CBCT = DcmUtil.get_pixels_hu(slices_CBCT[i])
         image_CT = DcmUtil.get_pixels_hu(slices_CT[i])
         image_SCT = DcmUtil.get_pixels_hu(slices_SCT[i])
+        #清理黑边
+        image_CBCT,image_CT,image_SCT=DcmUtil.clear_border(image_CBCT,image_CT,image_SCT)
+        print(image_CBCT.shape)
 
         # 计算
         vols = DcmUtil.comp(i, image_CBCT, image_CT, image_SCT, 255)
