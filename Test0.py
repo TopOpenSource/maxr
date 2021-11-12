@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 import pydicom
-from utils.DcmUtil import DcmUtil
+from utils.DcmUtil2 import DcmUtil
 from utils.ExcelUtil import ExcelUtil
 
 # DcmUtil.test()
@@ -40,9 +40,6 @@ def copPatientPath(excel, sheet_name, path, patientId):
         image_CBCT = DcmUtil.get_pixels_hu(slices_CBCT[i])
         image_CT = DcmUtil.get_pixels_hu(slices_CT[i])
         image_SCT = DcmUtil.get_pixels_hu(slices_SCT[i])
-
-        #清理黑边
-        image_CBCT,image_CT,image_SCT=DcmUtil.clear_border(image_CBCT,image_CT,image_SCT)
 
         # 计算
         vols = DcmUtil.comp(i, image_CBCT, image_CT, image_SCT, 255)

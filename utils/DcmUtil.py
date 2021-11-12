@@ -74,7 +74,8 @@ class DcmUtil:
         3：获取 最小坐标   最大坐标
         4：截取 最小坐标-最大坐标之间的值
         '''
-        image = np.maximum(image1, image2, image3)
+        image = np.maximum(image1, image2,image3)
+
         image = np.argwhere(image > -500)
         min_grid = image.min(axis=0)
         max_grid = image.max(axis=0)
@@ -82,7 +83,6 @@ class DcmUtil:
         return image1[min_grid[0]:max_grid[0] + 1, min_grid[1]:max_grid[1] + 1] \
             , image2[min_grid[0]:max_grid[0] + 1, min_grid[1]:max_grid[1] + 1] \
             , image3[min_grid[0]:max_grid[0] + 1, min_grid[1]:max_grid[1] + 1]
-
 
     # 切片排序
     @staticmethod

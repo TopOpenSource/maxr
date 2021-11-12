@@ -32,32 +32,31 @@ def clear_border(image1, image2, image3):
     4：截取 最小坐标-最大坐标之间的值
     '''
     image = np.maximum(image1, image2, image3)
-    print(image)
-    image = np.argwhere(image > 500)
+
+    image = np.argwhere(image > -500)
 
 
     min_grid = image.min(axis=0)
     max_grid = image.max(axis=0)
 
-    print(min_grid)
-    print(max_grid)
 
     return image1[min_grid[0]:max_grid[0] + 1, min_grid[1]:max_grid[1] + 1]\
         ,image2[min_grid[0]:max_grid[0] + 1, min_grid[1]:max_grid[1] + 1]\
         ,image3[min_grid[0]:max_grid[0] + 1, min_grid[1]:max_grid[1] + 1]
 
-image1=numpy.zeros((5, 5), dtype='int32')
+image1=numpy.full((512, 512),-1000, dtype='int32')
 image1[2][2]=501
 image1[4][2]=501
 
-image2=numpy.zeros((5, 5), dtype='int32')
+image2=numpy.full((512, 512),-1000, dtype='int32')
 image2[1][1]=501
 image2[2][3]=501
 
-image3=numpy.zeros((5, 5), dtype='int32')
+image3=numpy.full((512, 512),-1000, dtype='int32')
 image3[2][1]=501
 image3[4][3]=501
 
+
 i1,i2,i3=clear_border(image1,image2,image3)
-print(i3)
-print(i3.shape)
+#print(i3)
+#print(i3.shape)
