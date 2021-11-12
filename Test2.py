@@ -1,34 +1,57 @@
+import os
+
 import numpy as np
 import pydicom
+from utils.DcmUtil2 import DcmUtil
+from utils.ExcelUtil import ExcelUtil
 
-from utils.DcmUtil import DcmUtil
+# DcmUtil.test()
 
-#image_SCT = pydicom.dcmread("D:\\test_data\\0134606885310576\\CT\\0.dcm")
-
-image_SCT=DcmUtil.get_pixels_hu(pydicom.dcmread("D:\\test_data\\0134606885310576\\CT\\55.dcm"))
-
-#查看矩阵形状
-print(image_SCT.shape)
-
-#矩阵中的最小值
-min_index_CBCT =np.unravel_index(np.argmin(image_SCT, axis=None), image_SCT.shape)
-#最小值的坐标位置
-print(min_index_CBCT)
-#矩阵中的最小值
-print(image_SCT[min_index_CBCT])
-
-#矩阵中的最大值
-max_index_CBCT =np.unravel_index(np.argmax(image_SCT, axis=None), image_SCT.shape)
-#最大值的坐标位置
-print(max_index_CBCT)
-#矩阵中的最大值
-print(image_SCT[max_index_CBCT])
-
-#查询具体数据
 '''
-for i in range(0, 511):
-    for j in range(0, 511):
-        print(str(image_SCT[i][j])+",",end="")
-    print("")
+1 设置患者目录
+
+2.遍历CT的目录文件 
+  2-1 获取 CT的像素值
+  2-2 获取 CBCT对应的像素值
+  2-3 获取 SCT对应的像素值
+
 '''
+
+
+def copPatientPath(excel, sheet_name, path, patientId):
+    # 患者目录
+    patientPath = path + "\\" + patientId
+    excel.create_sheet(sheet_name)
+
+    patientCTPath = patientPath + "\\CT"
+    patientCBCTPath = patientPath + "\\CBCT"
+    patientSCTPath = patientPath + "\\SCT"
+
+    # 插入excel头
+    excel.insert_line_date(sheet_name, 1, (
+        '序号', 'mae_CBCT', 'mae_SCT', 'mse_CBCT', 'mse_SCT', 'rmse_CBCT', 'rmse_SCT', 'psnr_CBCT', 'psnr_SCT'))
+
+    # 按照方向排序切片
+    slices_CT = DcmUtil.sortSlices(patientCTPath)
+    slices_CBCT = DcmUtil.sortSlices(patientCBCTPath)
+    slices_SCT = DcmUtil.sortSlices(patientSCTPath)
+
+    for i in range(0, len(slices_CT)):
+        image_CBCT = DcmUtil.get_pixels_hu(slices_CBCT[i])
+        image_CT = DcmUtil.get_pixels_hu(slices_CT[i])
+        image_SCT = DcmUtil.get_pixels_hu(slices_SCT[i])
+
+        # 计算
+        vols = DcmUtil.comp(i, image_CBCT, image_CT, image_SCT, 255)
+        # 插入excel
+        excel.insert_line_date(sheet_name, i + 2, vols)
+
+
+excel = ExcelUtil()
+rootPath = "D:\\test_data"
+
+for file in os.listdir(rootPath):
+    copPatientPath(excel, file, rootPath, file)
+
+excel.save("D://c.xls")
 

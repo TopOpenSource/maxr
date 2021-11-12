@@ -9,9 +9,6 @@ class DcmUtil:
     @staticmethod
     def psnr(img1, img2, zeros):
         mse = np.sum((img1 - img2) ** 2) / (img1.size - zeros)
-        if(mse<0):
-            pass
-        # mse = np.mean((img1 - img2) ** 2)
         if mse == 0:
             return 100
         return 10 * np.log10(255.0 * 255.0 / mse)
@@ -55,7 +52,6 @@ class DcmUtil:
             psnr_SCT = DcmUtil.psnr(image_CT2, image_SCT,zero2)
 
             return (index, mae_CBCT, mae_SCT, mse_CBCT, mse_SCT, rmse_CBCT, rmse_SCT, psnr_CBCT, psnr_SCT)
-            #return (index, "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1")
         else:
             return (index, "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1")
 
@@ -82,7 +78,7 @@ class DcmUtil:
         image1=image1_.copy()
         image2=image2_.copy()
         '''
-        1: 三张图片合并，每个坐标取最大值
+        1: 两张图片合并，每个坐标取最大值
         2: 获取 < 500的坐标
         3：将 image1 image2 对应的设置为0
         4：返回 image1 image2  和 < 500的个数
