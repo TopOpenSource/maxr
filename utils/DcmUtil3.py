@@ -30,6 +30,11 @@ class DcmUtil:
         #mae = np.mean(np.abs(img1 - img2))
         return mae
 
+    @staticmethod
+    def reduce(img1, img2):
+        return img1-img2
+
+
     #测试方法
     @staticmethod
     def comp_test(image_CBCT, image_CT):
@@ -67,6 +72,21 @@ class DcmUtil:
             return (index, mae_CBCT, mae_SCT, mse_CBCT, mse_SCT, rmse_CBCT, rmse_SCT, psnr_CBCT, psnr_SCT)
         else:
             return (index, "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1")
+
+    #图片相减
+    @staticmethod
+    def reduce_img(index, image_CBCT, image_CT, image_SCT):
+        # 判断 shape是否相同
+        if image_CT.shape == image_CBCT.shape and image_CT.shape == image_SCT.shape:
+
+            image_CT, image_CBCT, image_SCT, zero1 = DcmUtil.clear_blank(image_CT, image_CBCT, image_SCT)
+
+            r_CBCT = DcmUtil.reduce(image_SCT, image_CT)
+            r_SCT = DcmUtil.reduce(image_CBCT, image_CT)
+
+            return (index, r_CBCT, r_SCT)
+        else:
+            return (index, "-1", "-1")
 
     # 切片的灰度值
     @staticmethod

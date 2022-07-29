@@ -2,3 +2,4 @@ numpy==1.21.3
 pydicom==2.2.2
 openpyxl==3.0.9
 python-docx==0.8.11
+matplotlib==3.5.2

@@ -20,4 +20,21 @@ img1[2][3] = -501
 
 from utils.DcmUtil3 import *
 
-DcmUtil.comp_test(img2,img1)
+#DcmUtil.comp_test(img2,img1)
+
+
+
+img3 = np.zeros((2, 2), dtype='int32')
+img4 = np.zeros((2, 2), dtype='int32')
+
+img3[0][0] = 1
+img3[0][1] = 3
+img3[1][0] = 3
+img3[1][1] = 1
+
+img4[0][0] = 2
+img4[0][1] = 2
+img4[1][0] = 2
+img4[1][1] = 2
+
+print(DcmUtil.reduce(img4,img3))
