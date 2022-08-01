@@ -21,21 +21,20 @@ class DcmUtil:
     @staticmethod
     def rmse(img1, img2, zeros):
         mse = np.sum((img1 - img2) ** 2) / (img1.size - zeros)
-       # print(mse)
+        # print(mse)
         return np.sqrt(mse)
 
     @staticmethod
     def mae(img1, img2, zeros):
         mae = np.sum(np.abs(img1 - img2)) / (img1.size - zeros)
-        #mae = np.mean(np.abs(img1 - img2))
+        # mae = np.mean(np.abs(img1 - img2))
         return mae
 
     @staticmethod
     def reduce(img1, img2):
-        return img1-img2
+        return img1 - img2
 
-
-    #测试方法
+    # 测试方法
     @staticmethod
     def comp_test(image_CBCT, image_CT):
         image_CT1, image_CBCT, image_SCT, zero1 = DcmUtil.clear_blank(image_CT, image_CBCT, image_CBCT)
@@ -49,31 +48,30 @@ class DcmUtil:
         print(mse_CBCT)
         print(rmse_CBCT)
 
-
     @staticmethod
     def comp(index, image_CBCT, image_CT, image_SCT, pix_max):
         # 判断 shape是否相同
         if image_CT.shape == image_CBCT.shape and image_CT.shape == image_SCT.shape:
 
-            image_CT1,image_CBCT,image_SCT,zero1=DcmUtil.clear_blank(image_CT,image_CBCT,image_SCT)
+            image_CT1, image_CBCT, image_SCT, zero1 = DcmUtil.clear_blank(image_CT, image_CBCT, image_SCT)
 
-            mae_CBCT = DcmUtil.mae(image_CT1, image_CBCT,zero1)
-            mae_SCT = DcmUtil.mae(image_CT1, image_SCT,zero1)
+            mae_CBCT = DcmUtil.mae(image_CT1, image_CBCT, zero1)
+            mae_SCT = DcmUtil.mae(image_CT1, image_SCT, zero1)
 
-            mse_CBCT = DcmUtil.mse(image_CT1, image_CBCT,zero1)
-            mse_SCT = DcmUtil.mse(image_CT1, image_SCT,zero1)
+            mse_CBCT = DcmUtil.mse(image_CT1, image_CBCT, zero1)
+            mse_SCT = DcmUtil.mse(image_CT1, image_SCT, zero1)
 
-            rmse_CBCT = DcmUtil.rmse(image_CT1, image_CBCT,zero1)
-            rmse_SCT = DcmUtil.rmse(image_CT1, image_SCT,zero1)
+            rmse_CBCT = DcmUtil.rmse(image_CT1, image_CBCT, zero1)
+            rmse_SCT = DcmUtil.rmse(image_CT1, image_SCT, zero1)
 
-            psnr_CBCT = DcmUtil.psnr(image_CT1, image_CBCT,zero1)
-            psnr_SCT = DcmUtil.psnr(image_CT1, image_SCT,zero1)
+            psnr_CBCT = DcmUtil.psnr(image_CT1, image_CBCT, zero1)
+            psnr_SCT = DcmUtil.psnr(image_CT1, image_SCT, zero1)
 
             return (index, mae_CBCT, mae_SCT, mse_CBCT, mse_SCT, rmse_CBCT, rmse_SCT, psnr_CBCT, psnr_SCT)
         else:
             return (index, "-1", "-1", "-1", "-1", "-1", "-1", "-1", "-1")
 
-    #图片相减
+    # 图片相减
     @staticmethod
     def reduce_img(index, image_CBCT, image_CT, image_SCT):
         # 判断 shape是否相同
@@ -107,7 +105,7 @@ class DcmUtil:
 
     # 清理图片的黑边
     @staticmethod
-    def clear_blank(ct,cbct,sct):
+    def clear_blank(ct, cbct, sct):
         '''
         1: 获取 < -500的坐标
         3：将 ct cbct cbct 对应的设置为0
@@ -120,7 +118,7 @@ class DcmUtil:
             ct[i[0]][i[1]] = 0
             cbct[i[0]][i[1]] = 0
             sct[i[0]][i[1]] = 0
-        return ct, cbct,sct, len(image)
+        return ct, cbct, sct, len(image)
 
     # 切片排序
     @staticmethod
@@ -128,3 +126,10 @@ class DcmUtil:
         slices = [pydicom.read_file(path + '/' + s) for s in os.listdir(path)]
         slices.sort(key=lambda x: float(x.ImagePositionPatient[2]))
         return slices
+
+    # 旋转 180
+    @staticmethod
+    def rot180(image):
+        image = np.rot90(image, 2)
+        image = np.fliplr(image)
+        return image
