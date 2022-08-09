@@ -10,13 +10,12 @@ def genExcel(patientPath,paramName):
     writer = pd.ExcelWriter(patientPath+"\\"+paramName+".xlsx",engine='openpyxl')
     #按照方向排序切片
     slices = DcmUtil.sortSlices(patientPath+"\\"+paramName)
-    #遍历切片
-    for i in range(0,len(slices) ):
+    #遍历切片len(slices)
+    for i in range(0,len(slices)):
        sheet_name=str(i)
        image_CT = DcmUtil.get_pixels_hu(slices[i])
        pd_data = pd.DataFrame(image_CT)
        #保存矩阵
-       print('a')
        pd_data.to_excel(writer, sheet_name, index=False)
 
     writer.save()
@@ -30,7 +29,7 @@ def genReduce(patientPath, leftParamName,rightParamName):
     slices_left = DcmUtil.sortSlices(patientPath + "\\" + leftParamName)
     slices_right = DcmUtil.sortSlices(patientPath + "\\" + rightParamName)
     # 遍历切片 len(slices_left)
-    for i in range(0,len(slices)):
+    for i in range(0,len(slices_left)):
         sheet_name = str(i)
         image_left = DcmUtil.get_pixels_hu(slices_left[i])
         image_right = DcmUtil.get_pixels_hu(slices_right[i])
